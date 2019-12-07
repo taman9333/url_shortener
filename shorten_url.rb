@@ -13,7 +13,7 @@ class ShortenUrl
   end
 
   def execute
-    record = Url.create(url: url, shortcode: shortcode)
+    record = Url.create(url: sanitize(url), shortcode: shortcode)
     if record.valid?
       OpenStruct.new(success?: true, shortcode: record.shortcode, errors: nil)
     else
@@ -21,4 +21,12 @@ class ShortenUrl
     end
   end
 
+  private
+
+  def sanitize(original_url)
+    original_url.strip!
+    original_url = original_url.downcase.gsub(%r{(https?:\/\/)|(www\.)}, '')
+    original_url.slice!(-1) if original_url[-1] == '/'
+    "http://#{original_url}"
+  end
 end
