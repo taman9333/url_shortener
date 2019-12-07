@@ -10,3 +10,7 @@ group :development do
   # reload sinatra app on changes
   gem 'rerun'
 end
+
+group :test, :development do
+  gem 'byebug'
+end
