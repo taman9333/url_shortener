@@ -17,8 +17,14 @@ before '/shorten' do
   end
 end
 
-get '/' do
-  { msg: 'hello world' }.to_json
+get '/:shortcode' do
+  record = Url.find_by_shortcode(params[:shortcode])
+  if record.present?
+    record.update_count!
+    [302, { 'location' => record.url }, {}]
+  else
+    [404, { error: 'The shortcode cannot be found in the system' }.to_json]
+  end
 end
 
 post '/shorten' do
