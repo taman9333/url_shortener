@@ -7,6 +7,15 @@ class Url < ActiveRecord::Base
   validates :shortcode, presence: true, uniqueness: true,
                         format: { with: /\A[0-9a-zA-Z_]{4,}\z/i }
 
+  # update counter with locking record to handle race condition
+  def update_count!
+    with_lock do
+      self.redirect_count += 1
+      self.last_seen_date = Time.now
+      save!
+    end
+  end
+
   def self.generate_unique_shortcode
     unique_shortcode = nil
     loop do
