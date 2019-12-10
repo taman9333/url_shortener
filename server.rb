@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra'
 require 'json'
 require_relative 'shorten_url'
@@ -8,9 +10,10 @@ end
 
 before '/shorten' do
   begin
-    valid_params = ['url', 'shortcode']
-    permitted_params = JSON.parse(request.body.read).select { |k, _v| valid_params.include? k }
-    @job_params = Sinatra::IndifferentHash[permitted_params]
+    valid_params = %w[url shortcode]
+    req_body = request.body.read
+    permitted = JSON.parse(req_body).select { |k, _v| valid_params.include? k }
+    @job_params = Sinatra::IndifferentHash[permitted]
   rescue JSON::ParserError
     halt 400, { message: 'Invalid JSON' }.to_json
   end
@@ -44,8 +47,7 @@ get '/:shortcode/stats' do
   if record.present?
     [200, { startDate: record.created_at.iso8601,
             redirectCount: record.redirect_count,
-            lastSeenDate: record.last_seen_date&.iso8601
-          }.to_json]
+            lastSeenDate: record.last_seen_date&.iso8601 }.to_json]
   else
     [404, { error: 'The shortcode cannot be found in the system' }.to_json]
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 gem 'pg'
@@ -13,6 +15,7 @@ end
 
 group :test, :development do
   gem 'byebug'
+  gem 'rubocop', require: false
 end
 
 group :test do
