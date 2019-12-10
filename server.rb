@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'json'
 require_relative 'shorten_url'
-require 'byebug'
 
 before do
   content_type 'application/json'
