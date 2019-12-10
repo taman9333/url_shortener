@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../spec_helper'
 require 'rack/test'
 require_relative '../../server'
@@ -14,7 +16,8 @@ RSpec.describe 'Url', type: :request do
   describe 'POST /shorten' do
     context 'valid request without shortcode' do
       before do
-        post '/shorten', params.except(:shortcode).to_json, CONTENT_TYPE: content_type
+        post '/shorten', params.except(:shortcode).to_json,
+             CONTENT_TYPE: content_type
       end
 
       it 'returns 201 status code' do
@@ -49,14 +52,15 @@ RSpec.describe 'Url', type: :request do
 
       it 'returns 409 status code if desired shortcode is already in use' do
         request
-        repeated_code = JSON.parse(last_response.body)["shortcode"]
-        post '/shorten', { url: "http://www.test44", shortcode: repeated_code }.to_json,
+        repeated_code = JSON.parse(last_response.body)['shortcode']
+        post '/shorten', { url: 'http://www.test44',
+                           shortcode: repeated_code }.to_json,
              CONTENT_TYPE: content_type
         expect(last_response.status).to eq(409)
       end
 
       it 'returns 422 status code if shortcode not match regex' do
-        post '/shorten', { url: "http://www.test44", shortcode: 'ab1' }.to_json,
+        post '/shorten', { url: 'http://www.test44', shortcode: 'ab1' }.to_json,
              CONTENT_TYPE: content_type
         expect(last_response.status).to eq(422)
       end
@@ -75,7 +79,7 @@ RSpec.describe 'Url', type: :request do
       end
 
       it 'return header with location matching url' do
-        expect(last_response.headers["location"]).to eq(created_url.url)
+        expect(last_response.headers['location']).to eq(created_url.url)
       end
     end
 
@@ -92,7 +96,7 @@ RSpec.describe 'Url', type: :request do
   describe 'GET /:shortcode/stats' do
     context 'valid request' do
       url = Url.create(url: 'http://test22.com',
-                               shortcode: Url.generate_unique_shortcode)
+                       shortcode: Url.generate_unique_shortcode)
       before { get "/#{url.shortcode}/stats", content_type: content_type }
 
       it 'returns status code to be 200' do
@@ -103,7 +107,7 @@ RSpec.describe 'Url', type: :request do
         correct_keys = %w[startDate redirectCount lastSeenDate]
         response = JSON.parse(last_response.body)
         expect(response.keys).to eq(correct_keys)
-        expect(response["redirectCount"]).to eq(url.redirect_count)
+        expect(response['redirectCount']).to eq(url.redirect_count)
       end
     end
 
