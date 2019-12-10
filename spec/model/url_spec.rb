@@ -1,5 +1,5 @@
-require_relative 'spec_helper'
-require_relative '../url'
+require_relative '../spec_helper'
+require_relative '../../url'
 
 RSpec.describe Url, type: :model do
   describe 'validations' do
