@@ -24,4 +24,13 @@ class Url < ActiveRecord::Base
     end
     unique_shortcode
   end
+
+  def self.sanitize(original_url)
+    return if original_url.nil?
+
+    original_url.strip!
+    original_url = original_url.downcase.gsub(%r{(https?:\/\/)|(www\.)}, '')
+    original_url.slice!(-1) if original_url[-1] == '/'
+    "http://#{original_url}"
+  end
 end
