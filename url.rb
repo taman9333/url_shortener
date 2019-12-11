@@ -35,9 +35,10 @@ class Url < ActiveRecord::Base
   def self.sanitize(original_url)
     return if original_url.nil?
 
-    original_url.strip!
-    original_url = original_url.downcase.gsub(%r{(https?:\/\/)|(www\.)}, '')
-    original_url.slice!(-1) if original_url[-1] == '/'
-    "http://#{original_url}"
+    url_dup = original_url.dup
+    url_dup.strip!
+    url_dup = url_dup.downcase.gsub(%r{(https?:\/\/)|(www\.)}, '')
+    url_dup.slice!(-1) if url_dup[-1] == '/'
+    "http://#{url_dup}"
   end
 end
