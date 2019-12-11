@@ -22,6 +22,9 @@ end
 get '/:shortcode' do
   record = Url.find_by_shortcode(params[:shortcode])
   if record.present?
+    # use atomic update as locking taking more time & avoid locking problems
+    Url.where(id: record.id).update_all("redirect_count = redirect_count + '1',
+                               last_seen_date = '#{Time.now.to_s(:db)}'")
     record.update_count!
     [302, { 'location' => record.url }, {}]
   else
