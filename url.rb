@@ -4,10 +4,15 @@ require 'sinatra/activerecord'
 
 class Url < ActiveRecord::Base
   CHARSETS = ('a'..'z').to_a + ('A'..'Z').to_a + (0..9).to_a + ['_']
+  URL_REGEX = %r/
+                ^(((https?):\/\/|)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}
+                (:[0-9]{1,5})?(\/.*)?)$
+              /x.freeze
 
-  validates :url, presence: true
+  validates :url, presence: true, format: { with: URL_REGEX }
+
   validates :shortcode, presence: true, uniqueness: true,
-                        format: { with: /\A[0-9a-zA-Z_]{4,}\z/i }
+                        format: { with: /\A[0-9a-zA-Z_]{4,}\z/ }
 
   # update counter with locking record to handle race condition
   def update_count!
