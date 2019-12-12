@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'url'
+require_relative 'counter'
+require_relative 'base_n'
 
 class ShortenUrl
   attr_accessor :url, :shortcode
@@ -30,8 +32,10 @@ class ShortenUrl
   private
 
   def create_unique_record
-    unique_shortcode = Url.generate_unique_shortcode
+    unique_shortcode = BaseN.encode(Counter.increment)
     Url.create(url: Url.sanitize(url), shortcode: unique_shortcode)
+  # We still need to rescue as generated short code might made collision with
+  # Desired shortcode that user used before
   rescue ActiveRecord::RecordNotUnique
     retry
   end

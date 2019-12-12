@@ -3,5 +3,8 @@
 # to run application thin start in the root directory
 
 require './server'
+require './counter'
+
+Counter.init
 
 run Sinatra::Application
