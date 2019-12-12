@@ -25,7 +25,6 @@ get '/:shortcode' do
     # use atomic update as locking taking more time & avoid locking problems
     Url.where(id: record.id).update_all("redirect_count = redirect_count + '1',
                                last_seen_date = '#{Time.now.to_s(:db)}'")
-    record.update_count!
     [302, { 'location' => record.url }, {}]
   else
     [404, { error: 'The shortcode cannot be found in the system' }.to_json]
